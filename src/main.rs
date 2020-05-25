@@ -9,14 +9,38 @@ pub struct Hook<'a> {
     pub hook: Option<Box<&'a Hook<'a>>>,
 }
 
-pub trait Hookable<T> {
-    fn preprocess(&self, t: T) -> bool;
-    fn process(&self, t: T) -> T;
-    fn execute(&self, t: T) -> T;
-    fn postprocess(&self, t: T) -> T;
-    fn sethook(&self, h: Hook);
+pub trait Hookable {
+    type Thing;
+    fn preprocess(&mut self, t: &mut Self::Thing) -> bool;
+    fn process(&mut self, t: &mut Self::Thing) -> &mut Self::Thing;
+    fn execute(&mut self, t: &mut Self::Thing) -> &mut Self::Thing;
+    fn postprocess(&mut self, t: &mut Self::Thing) -> &mut Self::Thing;
+    fn sethook(&mut self, h: Hook);
 }
 
+impl Hookable for Hook<'_> {
+    type Thing = String;
+    
+    fn preprocess(&mut self, t: &mut Self::Thing) -> bool {
+        true
+    }
+
+    fn process(&mut self, t: &mut Self::Thing) -> &mut String {
+        if self.preprocess(t) {
+            return self.execute(t);
+        }
+        return t;
+    }
+
+    fn execute(&mut self, t: &mut Self::Thing) -> &mut String {
+        t
+    }
+    fn postprocess(&mut self, t: &mut Self::Thing) -> &mut String {
+        t
+    }
+
+    fn sethook(&mut self, h: Hook) {}
+}
 
 impl Hook<'_> {
     pub fn process(&self) {
