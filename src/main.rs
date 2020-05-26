@@ -11,64 +11,62 @@ pub struct Hook<'a> {
 
 pub trait Hookable {
     type Thing;
-    fn preprocess(&mut self, t: &mut Self::Thing) -> bool;
-    fn process(&mut self, t: &mut Self::Thing) -> &mut Self::Thing;
-    fn execute(&mut self, t: &mut Self::Thing) -> &mut Self::Thing;
-    fn postprocess(&mut self, t: &mut Self::Thing) -> &mut Self::Thing;
-    fn sethook(&mut self, h: Hook);
+    fn preprocess<'a>(&self, t: &'a mut Self::Thing) -> bool;
+    fn process<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
+    fn execute<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
+    fn postprocess<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
 }
 
 impl Hookable for Hook<'_> {
     type Thing = String;
-    
-    fn preprocess(&mut self, t: &mut Self::Thing) -> bool {
+    fn preprocess<'a>(&self, _t: &'a mut Self::Thing) -> bool {
         true
     }
 
-    fn process(&mut self, t: &mut Self::Thing) -> &mut String {
+    fn process<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
         if self.preprocess(t) {
             return self.execute(t);
         }
-        return t;
-    }
-
-    fn execute(&mut self, t: &mut Self::Thing) -> &mut String {
-        t
-    }
-    fn postprocess(&mut self, t: &mut Self::Thing) -> &mut String {
         t
     }
 
-    fn sethook(&mut self, h: Hook) {}
-}
-
-impl Hook<'_> {
-    pub fn process(&self) {
-        println!("{}: {}", self.name, self.description);
-        match &self.hook {
-            Some(h) => {
-                h.process();
-            }
-            None => {
-                println!("{}", "🏆");
-            }
-        }
+    fn execute<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
+        t
+    }
+    fn postprocess<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
+        t
     }
 
-    // pub fn sethook(&mut self, hook: Option<Box<Hook>>) {
-    //     match &self.hook {
-    //         Some(h) => {
-    //             h.sethook(hook);
-    //         }
-    //         None => {
-    //             self.hook = None;
-    //         }
-    //     }
-    // }
+    // fn sethook(&mut self, h: Hook) {}
 }
 
+// impl Hook {
+//     pub fn process(&self) {
+//         println!("{}: {}", self.name, self.description);
+//         match &self.hook {
+//             Some(h) => {
+//                 h.process();
+//             }
+//             None => {
+//                 println!("{}", "🏆");
+//             }
+//         }
+//     }
+
+//     // pub fn sethook(&mut self, hook: Option<Box<Hook>>) {
+//     //     match &self.hook {
+//     //         Some(h) => {
+//     //             h.sethook(hook);
+//     //         }
+//     //         None => {
+//     //             self.hook = None;
+//     //         }
+//     //     }
+//     // }
+// }
 
 fn main() {
+    let mut x = "xyz".to_string();
     let mut h1 = Hook {
         name: "Hook1".to_string(),
         description: "First hook".to_string(),
@@ -80,5 +78,5 @@ fn main() {
         hook: None,
     };
     h1.hook = Some(Box::new(&h2));
-    h1.process();
+    h1.process(&mut x);
 }
