@@ -32,7 +32,7 @@ impl Hookable for Hook<'_> {
                 h.process(t);
             }
             None => {
-                println!("{}", "🏆");
+                // hook chain ends here, no-op.
             }
         }
         self.postprocess(t);
@@ -50,18 +50,18 @@ impl Hookable for Hook<'_> {
 }
 
 impl Hook<'_> {
-    fn preprocess<'a>(&self, _t: &'a mut String) -> bool {
+    pub fn preprocess<'a>(&self, _t: &'a mut String) -> bool {
         println!("{}: {}", self.name, "preprocess");
         true
     }
 
     pub fn execute<'a>(&self, t: &'a mut String) -> &'a mut String {
-        println!("{}: {} — {}", self.name, self.description, "execute");
+        println!("{}: {}", self.name, "execute");
         t
     }
 
     pub fn postprocess<'a>(&self, t: &'a mut String) -> &'a mut String {
-        println!("{}: {} — {}", self.name, self.description, "postprocess");
+        println!("{}: {}", self.name, "postprocess");
         t
     }
 
