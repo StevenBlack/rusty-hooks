@@ -25,8 +25,17 @@ impl Hookable for Hook<'_> {
 
     fn process<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
         if self.preprocess(t) {
-            return self.execute(t);
+            self.execute(t);
         }
+        match &self.hook {
+            Some(h) => {
+                h.process(t);
+            }
+            None => {
+                println!("{}", "🏆");
+            }
+        }
+        self.postprocess(t);
         t
     }
 
@@ -40,30 +49,33 @@ impl Hookable for Hook<'_> {
     // fn sethook(&mut self, h: Hook) {}
 }
 
-// impl Hook {
-//     pub fn process(&self) {
-//         println!("{}: {}", self.name, self.description);
-//         match &self.hook {
-//             Some(h) => {
-//                 h.process();
-//             }
-//             None => {
-//                 println!("{}", "🏆");
-//             }
-//         }
-//     }
+impl Hook<'_> {
+    fn preprocess<'a>(&self, _t: &'a mut String) -> bool {
+        println!("{}: {}", self.name, "preprocess");
+        true
+    }
 
-//     // pub fn sethook(&mut self, hook: Option<Box<Hook>>) {
-//     //     match &self.hook {
-//     //         Some(h) => {
-//     //             h.sethook(hook);
-//     //         }
-//     //         None => {
-//     //             self.hook = None;
-//     //         }
-//     //     }
-//     // }
-// }
+    pub fn execute<'a>(&self, t: &'a mut String) -> &'a mut String {
+        println!("{}: {} — {}", self.name, self.description, "execute");
+        t
+    }
+
+    pub fn postprocess<'a>(&self, t: &'a mut String) -> &'a mut String {
+        println!("{}: {} — {}", self.name, self.description, "postprocess");
+        t
+    }
+
+    // pub fn sethook(&mut self, hook: Option<Box<Hook>>) {
+    //     match &self.hook {
+    //         Some(h) => {
+    //             h.sethook(hook);
+    //         }
+    //         None => {
+    //             self.hook = None;
+    //         }
+    //     }
+    // }
+}
 
 fn main() {
     let mut x = "xyz".to_string();
