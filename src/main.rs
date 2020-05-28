@@ -9,15 +9,16 @@ pub struct Hook<'a> {
     pub hook: Option<Box<&'a Hook<'a>>>,
 }
 
-pub trait Hookable {
+pub trait Hooking {
     type Thing;
     fn preprocess<'a>(&self, t: &'a mut Self::Thing) -> bool;
     fn process<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
     fn execute<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
     fn postprocess<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
+    // fn sethook<'a>(&self, t: &'a mut Self) -> &'a mut Self;
 }
 
-impl Hookable for Hook<'_> {
+impl Hooking for Hook<'_> {
     type Thing = String;
     fn preprocess<'a>(&self, _t: &'a mut Self::Thing) -> bool {
         true
@@ -46,7 +47,17 @@ impl Hookable for Hook<'_> {
         t
     }
 
-    // fn sethook(&mut self, h: Hook) {}
+    // fn sethook<'a>(&self, hook: &'a mut Self) -> &'a mut Self {
+    //     match &self.hook {
+    //         Some(h) => {
+    //             h.sethook(hook);
+    //         }
+    //         None => {
+    //             self.hook<'a> = Some(Box::new(hook<'a>));
+    //         }
+    //     }
+    //     hook
+    // }
 }
 
 impl Hook<'_> {
@@ -64,17 +75,6 @@ impl Hook<'_> {
         println!("{}: {}", self.name, "postprocess");
         t
     }
-
-    // pub fn sethook(&mut self, hook: Option<Box<Hook>>) {
-    //     match &self.hook {
-    //         Some(h) => {
-    //             h.sethook(hook);
-    //         }
-    //         None => {
-    //             self.hook = None;
-    //         }
-    //     }
-    // }
 }
 
 fn main() {
