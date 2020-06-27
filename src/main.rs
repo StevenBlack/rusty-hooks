@@ -13,6 +13,7 @@ pub trait Hooking<'a> {
     type Thing;
     fn describe(&mut self);
     fn sethook(&mut self, t: &'a mut Self) -> &mut Self;
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing;
 }
 
 impl<'a> Hooking<'a> for Hook<'a> {
@@ -39,6 +40,10 @@ impl<'a> Hooking<'a> for Hook<'a> {
             }
         }
     }
+
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
 }
 
 fn main() {
@@ -60,4 +65,6 @@ fn main() {
     h2.sethook(&mut h3);
     h1.sethook(&mut h2);
     h1.describe();
+    let ret = h1.process("The quick brown fox".to_string());
+    println!("{}", ret);
 }
