@@ -11,82 +11,53 @@ pub struct Hook<'a> {
 
 pub trait Hooking<'a> {
     type Thing;
-    fn preprocess(&self, t: &'a mut Self::Thing) -> bool;
-    fn process(&mut self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
-    fn execute(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
-    fn postprocess(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
-    fn sethook(&mut self, t: &'a mut Self);
+    fn describe(&mut self);
+    fn sethook(&mut self, t: &'a mut Self) -> &mut Self;
 }
 
 impl<'a> Hooking<'a> for Hook<'a> {
     type Thing = String;
-    fn preprocess(&self, _t: &'a mut Self::Thing) -> bool {
-        true
-    }
 
-    fn process(&mut self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
-        if self.preprocess(t) {
-            self.execute(t);
-        }
+    fn describe(&mut self) {
+        println!("{}", self.description);
         match self.hook {
             Some(ref mut h) => {
-                h.process(t);
+                h.describe();
             }
-            None => {
-                // hook chain ends here, no-op.
-            }
+            None => {}
         }
-        self.postprocess(t);
-        t
     }
 
-    fn execute(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
-        t
-    }
-    fn postprocess(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
-        t
-    }
-
-    fn sethook(&mut self, hook_passed: &'a mut Self) {
+    fn sethook(&mut self, hook_passed: &'a mut Self) -> &mut Self {
         match self.hook {
-            Some(ref mut h) => h.sethook(hook_passed),
+            Some(ref mut h) => {
+                h.sethook(hook_passed)
+            }
             None => {
                 self.hook = Some(hook_passed);
+                self.hook.as_mut().unwrap()
             }
-        };
-        &self;
-    }
-}
-
-impl Hook<'_> {
-    pub fn preprocess<'a>(&self, _t: &'a mut String) -> bool {
-        println!("{}: {}", self.name, "preprocess");
-        true
-    }
-
-    pub fn execute<'a>(&self, t: &'a mut String) -> &'a mut String {
-        println!("{}: {}", self.name, "execute");
-        t
-    }
-
-    pub fn postprocess<'a>(&self, t: &'a mut String) -> &'a mut String {
-        println!("{}: {}", self.name, "postprocess");
-        t
+        }
     }
 }
 
 fn main() {
-    let mut x = "xyz".to_string();
     let mut h1 = Hook {
-        name: "Hook1".to_string(),
-        description: "First hook".to_string(),
+        name: "hook 1".to_string(),
+        description: "The first hook.".to_string(),
         hook: None,
     };
-    let h2 = Hook {
-        name: "Hook2".to_string(),
-        description: "Second hook".to_string(),
+    let mut h2 = Hook {
+        name: "hook 2".to_string(),
+        description: "The second hook.".to_string(),
         hook: None,
     };
+        let mut h3 = Hook {
+        name: "hook 3".to_string(),
+        description: "The third hook.".to_string(),
+        hook: None,
+    };
+    h2.sethook(&mut h3);
     h1.sethook(&mut h2);
-    h1.process(&mut x);
+    h1.describe();
 }
