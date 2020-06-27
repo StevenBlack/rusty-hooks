@@ -2,34 +2,34 @@
 
 use std::option::Option;
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Hook<'a> {
     pub name: String,
     pub description: String,
-    pub hook: Option<Box<&'a Hook<'a>>>,
+    pub hook: Option<&'a mut Hook<'a>>,
 }
 
-pub trait Hooking {
+pub trait Hooking<'a> {
     type Thing;
-    fn preprocess<'a>(&self, t: &'a mut Self::Thing) -> bool;
-    fn process<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
-    fn execute<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
-    fn postprocess<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
-    // fn sethook<'a>(&self, t: &'a mut Self) -> &'a mut Self;
+    fn preprocess(&self, t: &'a mut Self::Thing) -> bool;
+    fn process(&mut self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
+    fn execute(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
+    fn postprocess(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing;
+    fn sethook(&mut self, t: &'a mut Self);
 }
 
-impl Hooking for Hook<'_> {
+impl<'a> Hooking<'a> for Hook<'a> {
     type Thing = String;
-    fn preprocess<'a>(&self, _t: &'a mut Self::Thing) -> bool {
+    fn preprocess(&self, _t: &'a mut Self::Thing) -> bool {
         true
     }
 
-    fn process<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
+    fn process(&mut self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
         if self.preprocess(t) {
             self.execute(t);
         }
-        match &self.hook {
-            Some(h) => {
+        match self.hook {
+            Some(ref mut h) => {
                 h.process(t);
             }
             None => {
@@ -40,24 +40,22 @@ impl Hooking for Hook<'_> {
         t
     }
 
-    fn execute<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
+    fn execute(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
         t
     }
-    fn postprocess<'a>(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
+    fn postprocess(&self, t: &'a mut Self::Thing) -> &'a mut Self::Thing {
         t
     }
 
-    // fn sethook<'a>(&self, hook: &'a mut Self) -> &'a mut Self {
-    //     match &self.hook {
-    //         Some(h) => {
-    //             h.sethook(hook);
-    //         }
-    //         None => {
-    //             self.hook<'a> = Some(Box::new(hook<'a>));
-    //         }
-    //     }
-    //     hook
-    // }
+    fn sethook(&mut self, hook_passed: &'a mut Self) {
+        match self.hook {
+            Some(ref mut h) => h.sethook(hook_passed),
+            None => {
+                self.hook = Some(hook_passed);
+            }
+        };
+        &self;
+    }
 }
 
 impl Hook<'_> {
@@ -89,6 +87,6 @@ fn main() {
         description: "Second hook".to_string(),
         hook: None,
     };
-    h1.hook = Some(Box::new(&h2));
+    h1.sethook(&mut h2);
     h1.process(&mut x);
 }
