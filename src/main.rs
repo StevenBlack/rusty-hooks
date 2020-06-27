@@ -42,7 +42,14 @@ impl<'a> Hooking<'a> for Hook<'a> {
     }
 
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
-        thing
+        let mut ret = format!("{} - " ,thing);
+        match self.hook {
+            Some(ref mut h) => {
+                ret = h.process(ret);
+            }
+            None => {}
+        }
+        ret
     }
 }
 
