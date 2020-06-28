@@ -14,6 +14,7 @@ pub trait Hooking<'a> {
     fn describe(&mut self);
     fn sethook(&mut self, t: &'a mut Self) -> &mut Self;
     fn process(&mut self, thing: Self::Thing) -> Self::Thing;
+    fn execute(&mut self, thing: Self::Thing) -> Self::Thing;
 }
 
 impl<'a> Hooking<'a> for Hook<'a> {
@@ -31,9 +32,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
 
     fn sethook(&mut self, hook_passed: &'a mut Self) -> &mut Self {
         match self.hook {
-            Some(ref mut h) => {
-                h.sethook(hook_passed)
-            }
+            Some(ref mut h) => h.sethook(hook_passed),
             None => {
                 self.hook = Some(hook_passed);
                 self.hook.as_mut().unwrap()
@@ -42,7 +41,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
     }
 
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
-        let mut ret = format!("{} - " ,thing);
+        let mut ret = self.execute(thing);
         match self.hook {
             Some(ref mut h) => {
                 ret = h.process(ret);
@@ -50,6 +49,9 @@ impl<'a> Hooking<'a> for Hook<'a> {
             None => {}
         }
         ret
+    }
+    fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
+        return format!("{} - {}", thing, self.name);
     }
 }
 
@@ -64,13 +66,19 @@ fn main() {
         description: "The second hook.".to_string(),
         hook: None,
     };
-        let mut h3 = Hook {
+    let mut h3 = Hook {
         name: "hook 3".to_string(),
         description: "The third hook.".to_string(),
         hook: None,
     };
-    h2.sethook(&mut h3);
+    let mut h4 = Hook {
+        name: "hook 4".to_string(),
+        description: "The forth hook.".to_string(),
+        hook: None,
+    };
+    h3.sethook(&mut h4);
     h1.sethook(&mut h2);
+    h1.sethook(&mut h3);
     h1.describe();
     let ret = h1.process("The quick brown fox".to_string());
     println!("{}", ret);
