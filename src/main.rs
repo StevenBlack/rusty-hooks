@@ -13,6 +13,7 @@ pub trait Hooking<'a> {
     type Thing;
     fn describe(&mut self);
     fn sethook(&mut self, t: &'a mut Self) -> &mut Self;
+    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing);
     fn process(&mut self, thing: Self::Thing) -> Self::Thing;
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing;
 }
@@ -40,8 +41,15 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
     }
 
+    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
+        (true, thing)
+    }
+
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
-        let mut ret = self.execute(thing);
+        let (ok, mut ret) = self.preprocess(thing);
+        if ok {
+            ret = self.execute(ret);
+        }
         match self.hook {
             Some(ref mut h) => {
                 ret = h.process(ret);
