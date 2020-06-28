@@ -16,6 +16,7 @@ pub trait Hooking<'a> {
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing);
     fn process(&mut self, thing: Self::Thing) -> Self::Thing;
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing;
+    fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing;
 }
 
 impl<'a> Hooking<'a> for Hook<'a> {
@@ -42,7 +43,8 @@ impl<'a> Hooking<'a> for Hook<'a> {
     }
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
-        (true, thing)
+        let ret = format!("{} - {} pre", thing, self.name);
+        (true, ret)
     }
 
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
@@ -56,10 +58,15 @@ impl<'a> Hooking<'a> for Hook<'a> {
             }
             None => {}
         }
+        ret = self.postprocess(ret);
         ret
     }
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
         return format!("{} - {}", thing, self.name);
+    }
+
+    fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
+        return format!("{} - {} post", thing, self.name);
     }
 }
 
