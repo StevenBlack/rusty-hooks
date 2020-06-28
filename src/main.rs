@@ -44,7 +44,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         let ret = format!("{} - {} pre", thing, self.name);
-        (true, ret)
+        (false, ret)
     }
 
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
@@ -58,7 +58,9 @@ impl<'a> Hooking<'a> for Hook<'a> {
             }
             None => {}
         }
-        ret = self.postprocess(ret);
+        if ok {
+            ret = self.postprocess(ret);
+        }
         ret
     }
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
