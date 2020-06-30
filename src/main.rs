@@ -7,7 +7,6 @@ pub struct Hook<'a> {
     pub name: String,
     pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
-    pub verbose: i8,
 }
 
 impl<'a> Default for Hook<'a> {
@@ -16,7 +15,6 @@ impl<'a> Default for Hook<'a> {
             name: "No-name hook".to_string(),
             description: "No-description hook".to_string(),
             hook: None,
-            verbose: 0,
         }
     }
 }
@@ -54,9 +52,6 @@ impl<'a> Hooking<'a> for Hook<'a> {
     }
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
-        if self.verbose > 1 {
-            todo!();
-        }
         let ret = format!("{} - {} pre", thing, self.name);
         (false, ret)
     }
@@ -64,13 +59,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
         let (ok, mut ret) = self.preprocess(thing);
         if ok {
-            if self.verbose > 2 {
-                todo!();
-            }
             ret = self.execute(ret);
-        } else if self.verbose > 2 {
-            // hook does not apply
-            todo!();
         }
 
         match self.hook {
@@ -85,16 +74,10 @@ impl<'a> Hooking<'a> for Hook<'a> {
         ret
     }
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
-        if self.verbose > 0 {
-            todo!();
-        }
         return format!("{} - {}", thing, self.name);
     }
 
     fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
-        if self.verbose > 1 {
-            todo!();
-        }
         return format!("{} - {} post", thing, self.name);
     }
 }
