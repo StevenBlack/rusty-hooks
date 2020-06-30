@@ -7,8 +7,19 @@ pub struct Hook<'a> {
     pub name: String,
     pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
+    pub verbose: i8,
 }
 
+impl<'a> Default for Hook<'a> {
+    fn default() -> Hook<'a> {
+        Hook {
+            name: "No-name hook".to_string(),
+            description: "No-description hook".to_string(),
+            hook: None,
+            verbose: 0,
+        }
+    }
+}
 pub trait Hooking<'a> {
     type Thing;
     fn describe(&mut self);
@@ -43,6 +54,9 @@ impl<'a> Hooking<'a> for Hook<'a> {
     }
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
+        if self.verbose > 1 {
+            todo!();
+        }
         let ret = format!("{} - {} pre", thing, self.name);
         (false, ret)
     }
@@ -50,8 +64,15 @@ impl<'a> Hooking<'a> for Hook<'a> {
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
         let (ok, mut ret) = self.preprocess(thing);
         if ok {
+            if self.verbose > 2 {
+                todo!();
+            }
             ret = self.execute(ret);
+        } else if self.verbose > 2 {
+            // hook does not apply
+            todo!();
         }
+
         match self.hook {
             Some(ref mut h) => {
                 ret = h.process(ret);
@@ -64,10 +85,16 @@ impl<'a> Hooking<'a> for Hook<'a> {
         ret
     }
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
+        if self.verbose > 0 {
+            todo!();
+        }
         return format!("{} - {}", thing, self.name);
     }
 
     fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
+        if self.verbose > 1 {
+            todo!();
+        }
         return format!("{} - {} post", thing, self.name);
     }
 }
@@ -76,22 +103,22 @@ fn main() {
     let mut h1 = Hook {
         name: "hook 1".to_string(),
         description: "The first hook.".to_string(),
-        hook: None,
+        ..Default::default()
     };
     let mut h2 = Hook {
         name: "hook 2".to_string(),
         description: "The second hook.".to_string(),
-        hook: None,
+        ..Default::default()
     };
     let mut h3 = Hook {
         name: "hook 3".to_string(),
         description: "The third hook.".to_string(),
-        hook: None,
+        ..Default::default()
     };
     let mut h4 = Hook {
         name: "hook 4".to_string(),
         description: "The forth hook.".to_string(),
-        hook: None,
+        ..Default::default()
     };
     h3.sethook(&mut h4);
     h1.sethook(&mut h2);
@@ -99,4 +126,12 @@ fn main() {
     h1.describe();
     let ret = h1.process("The quick brown fox".to_string());
     println!("{}", ret);
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
 }
