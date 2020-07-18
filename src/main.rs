@@ -18,14 +18,19 @@ impl<'a> Default for Hook<'a> {
         }
     }
 }
+
 pub trait Hooking<'a> {
     type Thing;
     fn describe(&mut self);
     fn sethook(&mut self, t: &'a mut Self) -> &mut Self;
-    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing);
+    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
+        (true, thing)
+    }
     fn process(&mut self, thing: Self::Thing) -> Self::Thing;
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing;
-    fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing;
+    fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
 }
 
 impl<'a> Hooking<'a> for Hook<'a> {
@@ -53,7 +58,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         let ret = format!("{} - {} pre", thing, self.name);
-        (false, ret)
+        (true, ret)
     }
 
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
@@ -73,8 +78,9 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
         ret
     }
+
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
-        return format!("{} - {}", thing, self.name);
+        return format!("{} - {} execute", thing, self.name);
     }
 
     fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
@@ -103,10 +109,12 @@ fn main() {
         description: "The forth hook.".to_string(),
         ..Default::default()
     };
+
     h3.sethook(&mut h4);
     h1.sethook(&mut h2);
     h1.sethook(&mut h3);
     h1.describe();
+
     let ret = h1.process("The quick brown fox".to_string());
     println!("{}", ret);
 }
