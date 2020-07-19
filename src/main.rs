@@ -3,7 +3,7 @@
 use std::option::Option;
 
 #[derive(Debug)]
-pub struct Hook<'a> {
+struct Hook<'a> {
     pub name: String,
     pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
@@ -19,15 +19,21 @@ impl<'a> Default for Hook<'a> {
     }
 }
 
-pub trait Hooking<'a> {
+trait Hooking<'a> {
     type Thing;
-    fn describe(&mut self);
-    fn sethook(&mut self, t: &'a mut Self) -> &mut Self;
+    fn describe(&mut self) {}
+    fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
+        self
+    }
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         (true, thing)
     }
-    fn process(&mut self, thing: Self::Thing) -> Self::Thing;
-    fn execute(&mut self, thing: Self::Thing) -> Self::Thing;
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+    fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
     fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
         thing
     }
@@ -35,7 +41,6 @@ pub trait Hooking<'a> {
 
 impl<'a> Hooking<'a> for Hook<'a> {
     type Thing = String;
-
     fn describe(&mut self) {
         println!("{}", self.description);
         match self.hook {
