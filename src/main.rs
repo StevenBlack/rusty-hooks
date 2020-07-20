@@ -19,9 +19,34 @@ impl<'a> Default for Hook<'a> {
     }
 }
 
-trait Hooking<'a> {
+trait Describing<'a> {
     type Thing;
     fn describe(&mut self) {}
+}
+
+impl<'a> Describing<'a> for Hook<'a> {
+    type Thing = String;
+    fn describe(&mut self) {
+        println!("Hook description: {}", self.description);
+        match self.hook {
+            Some(ref mut h) => {
+                h.describe();
+            }
+            None => {}
+        }
+    }
+}
+
+trait Processing<'a> {
+    type Thing;
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+}
+
+trait Hooking<'a> {
+    type Thing;
+    // fn describe(&mut self) {}
     fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
         self
     }
@@ -48,16 +73,6 @@ trait Executing<'a>: Hooking<'a> {
 
 impl<'a> Hooking<'a> for Hook<'a> {
     type Thing = String;
-    fn describe(&mut self) {
-        println!("{}", self.description);
-        match self.hook {
-            Some(ref mut h) => {
-                h.describe();
-            }
-            None => {}
-        }
-    }
-
     fn sethook(&mut self, hook_passed: &'a mut Self) -> &mut Self {
         match self.hook {
             Some(ref mut h) => h.sethook(hook_passed),
