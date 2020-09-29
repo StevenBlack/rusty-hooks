@@ -124,7 +124,8 @@ impl<'a> Hooking<'a> for Hook<'a> {
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
         let (ok, mut ret) = self.preprocess(thing);
         if ok {
-            ret = self.allot(ret);
+            // allot will hapen here
+
             ret = self.execute(ret);
         }
 
