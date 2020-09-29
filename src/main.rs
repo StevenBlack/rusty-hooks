@@ -27,7 +27,18 @@ trait Describing<'a> {
 impl<'a> Describing<'a> for Hook<'a> {
     type Thing = String;
     fn describe(&mut self) {
-        println!("Hook description: {}", self.description);
+        let mut next = "not hooked".to_string();
+        match self.hook {
+            Some(ref mut h) => {
+                next = h.name.clone();
+            }
+            None => {}
+        }
+
+        println!(
+            "Hook name: '{}' description: '{}' next: '{}'",
+            self.name, self.description, next
+        );
         match self.hook {
             Some(ref mut h) => {
                 h.describe();
@@ -142,7 +153,7 @@ fn main() {
     h1.sethook(&mut h3);
     h1.describe();
 
-    let ret = h1.process("The quick brown fox".to_string());
+    let ret = h1.process("Starting: ".to_string());
     println!("{}", ret);
 }
 
