@@ -7,6 +7,7 @@ struct Hook<'a> {
     pub name: String,
     pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
+    pub hooks: Vec<&'a mut Hook<'a>>,
 }
 
 impl<'a> Default for Hook<'a> {
@@ -15,6 +16,7 @@ impl<'a> Default for Hook<'a> {
             name: "No-name hook".to_string(),
             description: "No-description hook".to_string(),
             hook: None,
+            hooks: vec![],
         }
     }
 }
@@ -61,6 +63,10 @@ trait Hooking<'a> {
     fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
         self
     }
+    fn sethooks(&mut self, _t: &'a mut Self) -> () {
+        ()
+    }
+
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         (true, thing)
     }
@@ -68,6 +74,9 @@ trait Hooking<'a> {
         thing
     }
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+    fn allot(&mut self, thing: Self::Thing) -> Self::Thing {
         thing
     }
     fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
@@ -82,8 +91,16 @@ trait Executing<'a>: Hooking<'a> {
     }
 }
 
+trait Alloting<'a>: Hooking<'a> {
+    type Thing;
+    fn allot(&mut self, thing: <Self as Alloting<'a>>::Thing) -> <Self as Alloting<'a>>::Thing {
+        thing
+    }
+}
+
 impl<'a> Hooking<'a> for Hook<'a> {
     type Thing = String;
+
     fn sethook(&mut self, hook_passed: &'a mut Self) -> &mut Self {
         match self.hook {
             Some(ref mut h) => h.sethook(hook_passed),
@@ -94,6 +111,11 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
     }
 
+    fn sethooks(&mut self, hook_passed: &'a mut Self) -> () {
+        self.hooks.push(hook_passed);
+        ()
+    }
+
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         let ret = format!("{} - {} pre", thing, self.name);
         (true, ret)
@@ -102,6 +124,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
         let (ok, mut ret) = self.preprocess(thing);
         if ok {
+            ret = self.allot(ret);
             ret = self.execute(ret);
         }
 
@@ -119,6 +142,10 @@ impl<'a> Hooking<'a> for Hook<'a> {
 
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
         return format!("{} - {} execute", thing, self.name);
+    }
+
+    fn allot(&mut self, thing: Self::Thing) -> Self::Thing {
+        return format!("{} - {} allot", thing, self.name);
     }
 
     fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
