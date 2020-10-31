@@ -74,13 +74,6 @@ pub trait Hooking<'a> {
     }
 }
 
-pub trait Executing<'a>: Hooking<'a> {
-    type Thing;
-    fn execute(&mut self, thing: <Self as Executing<'a>>::Thing) -> <Self as Executing<'a>>::Thing {
-        thing
-    }
-}
-
 impl<'a> Hooking<'a> for Hook<'a> {
     type Thing = String;
 
