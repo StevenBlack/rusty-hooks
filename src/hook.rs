@@ -11,7 +11,7 @@ impl<'a> Default for Hook<'a> {
     fn default() -> Hook<'a> {
         Hook {
             name: "No-name hook".to_string(),
-            description: "No-description hook".to_string(),
+            description: "No-description".to_string(),
             hook: None,
         }
     }
@@ -130,8 +130,14 @@ impl<'a> Hooking<'a> for Hook<'a> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     #[test]
-    fn hook_tests() {
-        assert_eq!(2 + 2, 4);
+    fn hook_default_tests() {
+        // assert_eq!(2 + 2, 4);
+        let h = Hook {
+            ..Default::default()
+        };
+        assert_eq!(h.name, "No-name hook");
+        assert_eq!(h.description, "No-description");
     }
 }
