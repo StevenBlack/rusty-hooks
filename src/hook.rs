@@ -5,6 +5,7 @@ pub struct Hook<'a> {
     pub name: String,
     pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
+    pub hooks: Vec<&'a mut Hook<'a>>,
 }
 
 impl<'a> Default for Hook<'a> {
@@ -13,6 +14,7 @@ impl<'a> Default for Hook<'a> {
             name: "No-name hook".to_string(),
             description: "No-description".to_string(),
             hook: None,
+            hooks: Vec::new(),
         }
     }
 }
@@ -60,6 +62,8 @@ pub trait Hooking<'a> {
         self
     }
 
+    fn zethook(&mut self, _t: &'a mut Self) -> () {}
+
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         (true, thing)
     }
@@ -94,6 +98,11 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
     }
 
+    fn zethook(&mut self, hook_passed: &'a mut Self) -> () {
+        self.hooks.push(hook_passed);
+    }
+
+
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         let ret = format!("{} - {} pre", thing, self.name);
         (true, ret)
@@ -116,6 +125,13 @@ impl<'a> Hooking<'a> for Hook<'a> {
         if ok {
             ret = self.postprocess(ret);
         }
+
+        let hook_slice = &self.hooks[..];
+
+        for h in hook_slice {
+            ret = h.process(ret);
+        }
+
         ret
     }
 
