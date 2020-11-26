@@ -5,7 +5,7 @@ pub struct Hook<'a> {
     pub name: String,
     pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
-    pub hooks: Vec<&'a mut Hook<'a>>,
+    pub hooks: Vec<&'a Hook<'a>>,
 }
 
 impl<'a> Default for Hook<'a> {
@@ -126,12 +126,11 @@ impl<'a> Hooking<'a> for Hook<'a> {
             ret = self.postprocess(ret);
         }
 
-        let hook_slice = &self.hooks[..];
-
-        for h in hook_slice {
-            ret = h.process(ret);
+        // here iterate self.hooks[]
+        for h in &self.hooks {
+            println!("Hello {}", h.name);
+            // ret = h.process(ret);
         }
-
         ret
     }
 
