@@ -5,7 +5,7 @@ pub struct Hook<'a> {
     pub name: String,
     pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
-    pub hooks: Vec<&'a Hook<'a>>,
+    pub hooks: Vec<&'a mut Hook<'a>>,
 }
 
 impl<'a> Default for Hook<'a> {
@@ -45,6 +45,12 @@ impl<'a> Describing<'a> for Hook<'a> {
             }
             None => {}
         }
+
+        // here iterate self.hooks[]
+        for h in self.hooks.as_mut_slice() {
+            h.describe();
+        }
+
     }
 }
 
@@ -57,7 +63,6 @@ pub trait Processing<'a> {
 
 pub trait Hooking<'a> {
     type Thing;
-    // fn describe(&mut self) {}
     fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
         self
     }
@@ -112,7 +117,6 @@ impl<'a> Hooking<'a> for Hook<'a> {
         let (ok, mut ret) = self.preprocess(thing);
         if ok {
             // allot will hapen here
-
             ret = self.execute(ret);
         }
 
@@ -127,9 +131,8 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
 
         // here iterate self.hooks[]
-        for h in &self.hooks {
-            println!("Hello {}", h.name);
-            // ret = h.process(ret);
+        for h in self.hooks.as_mut_slice() {
+            ret = h.process(ret);
         }
         ret
     }

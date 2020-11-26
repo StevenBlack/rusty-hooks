@@ -30,10 +30,10 @@ fn main() {
         ..Default::default()
     };
 
-    h3.zethook(&mut h4);
-    h1.zethook(&mut h2);
-    h1.zethook(&mut h3);
+    h3.sethook(&mut h4);
+    h1.sethook(&mut h2);
 
+    h1.sethook(&mut h3);
     h1.zethook(&mut h5);
 
     h1.describe();
