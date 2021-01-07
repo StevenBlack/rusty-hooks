@@ -11,8 +11,8 @@ pub struct Hook<'a> {
 impl<'a> Default for Hook<'a> {
     fn default() -> Hook<'a> {
         Hook {
-            name: "No-name hook".to_string(),
-            description: "No-description".to_string(),
+            name: "".to_string(),
+            description: "".to_string(),
             hook: None,
             hooks: Vec::new(),
         }
@@ -157,9 +157,11 @@ mod tests {
     fn hook_default_tests() {
         // assert_eq!(2 + 2, 4);
         let h = Hook {
+            name: "test hook".to_string(),
+            description: "description".to_string(),
             ..Default::default()
         };
-        assert_eq!(h.name, "No-name hook");
-        assert_eq!(h.description, "No-description");
+        assert_eq!(h.name, "test hook");
+        assert_eq!(h.description, "description");
     }
 }
