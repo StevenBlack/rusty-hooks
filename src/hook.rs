@@ -61,6 +61,29 @@ pub trait Processing<'a> {
     }
 }
 
+pub trait Preprocessing<'a> {
+    type Thing;
+    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
+        (true, thing)
+    }
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+}
+
+pub trait Prepostprocessing<'a> {
+    type Thing;
+    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
+        (true, thing)
+    }
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+    fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+}
+
 pub trait Hooking<'a> {
     type Thing;
     fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
@@ -83,7 +106,7 @@ pub trait Hooking<'a> {
     }
 }
 
-pub trait Executing<'a>: Hooking<'a> {
+pub trait Executing<'a> {
     type Thing;
     fn execute(
         &mut self,
@@ -110,7 +133,6 @@ impl<'a> Hooking<'a> for Hook<'a> {
     fn zethook(&mut self, hook_passed: &'a mut Self) -> () {
         self.hooks.push(hook_passed);
     }
-
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         let ret = format!("{} - {} pre", thing, self.name);

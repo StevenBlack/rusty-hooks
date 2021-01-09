@@ -2,6 +2,9 @@
 mod hook;
 use crate::hook::*;
 
+mod parsers;
+use crate::parsers::*;
+
 fn main() {
     let mut h1 = hook::Hook {
         name: "hook 1".to_string(),
