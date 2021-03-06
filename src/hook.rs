@@ -3,7 +3,6 @@ use std::option::Option;
 #[derive(Debug)]
 pub struct Hook<'a> {
     pub name: String,
-    pub description: String,
     pub hook: Option<&'a mut Hook<'a>>,
     pub hooks: Vec<&'a mut Hook<'a>>,
 }
@@ -12,7 +11,6 @@ impl<'a> Default for Hook<'a> {
     fn default() -> Hook<'a> {
         Hook {
             name: "".to_string(),
-            description: "".to_string(),
             hook: None,
             hooks: Vec::new(),
         }
@@ -36,8 +34,8 @@ impl<'a> Describing<'a> for Hook<'a> {
         }
 
         println!(
-            "Hook name: '{}' description: '{}' next: '{}'",
-            self.name, self.description, next
+            "Hook name: '{}' next: '{}'",
+            self.name, next
         );
         match self.hook {
             Some(ref mut h) => {
@@ -180,10 +178,8 @@ mod tests {
         // assert_eq!(2 + 2, 4);
         let h = Hook {
             name: "test hook".to_string(),
-            description: "description".to_string(),
             ..Default::default()
         };
         assert_eq!(h.name, "test hook");
-        assert_eq!(h.description, "description");
     }
 }

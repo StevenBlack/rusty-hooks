@@ -8,28 +8,23 @@ use crate::parsers::*;
 fn main() {
     let mut h1 = hook::Hook {
         name: "hook 1".to_string(),
-        description: "The first hook.".to_string(),
         ..Default::default()
     };
     let mut h2 = hook::Hook {
         name: "hook 2".to_string(),
-        description: "The second hook.".to_string(),
         ..Default::default()
     };
     let mut h3 = hook::Hook {
         name: "hook 3".to_string(),
-        description: "The third hook.".to_string(),
         ..Default::default()
     };
     let mut h4 = hook::Hook {
         name: "hook 4".to_string(),
-        description: "The forth hook.".to_string(),
         ..Default::default()
     };
 
     let mut h5 = hook::Hook {
         name: "hook 5".to_string(),
-        description: "The fifth hook.".to_string(),
         ..Default::default()
     };
 
