@@ -12,7 +12,7 @@ impl<'a> Hooking<'a> for UppercaseParserHook<'a> {
         self
     }
 
-    fn zethook(&mut self, _t: &'a mut Self) -> () {}
+    fn addhook(&mut self, _t: &'a mut Self) -> () {}
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         (true, thing)

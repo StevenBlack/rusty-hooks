@@ -32,7 +32,7 @@ fn main() {
     h1.sethook(&mut h2);
 
     h1.sethook(&mut h3);
-    h1.zethook(&mut h5);
+    h1.addhook(&mut h5);
 
     h1.describe();
 
