@@ -53,7 +53,6 @@ impl<'a> Describing<'a> for Hook<'a> {
         for h in self.hooks.as_mut_slice() {
             h.describe();
         }
-
     }
 }
 
@@ -97,7 +96,7 @@ pub trait Hooking<'a> {
         self
     }
 
-    fn zethook(&mut self, _t: &'a mut Self) -> () {}
+    fn addhook(&mut self, _t: &'a mut Self) -> () {}
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         (true, thing)
@@ -137,7 +136,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
     }
 
-    fn zethook(&mut self, hook_passed: &'a mut Self) -> () {
+    fn addhook(&mut self, hook_passed: &'a mut Self) -> () {
         self.hooks.push(hook_passed);
     }
 
