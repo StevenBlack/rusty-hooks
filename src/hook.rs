@@ -57,6 +57,7 @@ impl<'a> Describing<'a> for Hook<'a> {
     }
 }
 
+/// Generic processing trait
 pub trait Processing<'a> {
     type Thing;
     fn process(&mut self, thing: Self::Thing) -> Self::Thing {
@@ -64,6 +65,7 @@ pub trait Processing<'a> {
     }
 }
 
+/// Generic pre-process trait.
 pub trait Preprocessing<'a> {
     type Thing;
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
@@ -74,6 +76,7 @@ pub trait Preprocessing<'a> {
     }
 }
 
+/// Generic pre- and post-processing trait
 pub trait Prepostprocessing<'a> {
     type Thing;
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
@@ -87,6 +90,7 @@ pub trait Prepostprocessing<'a> {
     }
 }
 
+/// Generic hooking trait
 pub trait Hooking<'a> {
     type Thing;
     fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
