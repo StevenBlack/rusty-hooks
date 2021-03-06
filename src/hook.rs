@@ -1,12 +1,15 @@
 use std::option::Option;
 
 #[derive(Debug)]
+
+/// Hook structure
 pub struct Hook<'a> {
     pub name: String,
     pub hook: Option<&'a mut Hook<'a>>,
     pub hooks: Vec<&'a mut Hook<'a>>,
 }
 
+/// Default template for Hook
 impl<'a> Default for Hook<'a> {
     fn default() -> Hook<'a> {
         Hook {
@@ -17,11 +20,13 @@ impl<'a> Default for Hook<'a> {
     }
 }
 
+/// Trait that describes an instance
 pub trait Describing<'a> {
     type Thing;
     fn describe(&mut self) {}
 }
 
+/// Trait implementation for Hook
 impl<'a> Describing<'a> for Hook<'a> {
     type Thing = String;
     fn describe(&mut self) {
@@ -104,13 +109,13 @@ pub trait Hooking<'a> {
     }
 }
 
+/// Generic executing trait
 pub trait Executing<'a> {
     type Thing;
     fn execute(
         &mut self,
         thing: <Self as Executing<'a>>::Thing
     ) -> <Self as Executing<'a>>::Thing {
-
         thing
     }
 }
