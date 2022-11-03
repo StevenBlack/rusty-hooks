@@ -109,7 +109,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
 
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
-        let ret = format!("{} - {} pre", thing, self.name);
+        let ret = format!("{} - {} pre\n", thing, self.name);
         (true, ret)
     }
 
@@ -138,11 +138,11 @@ impl<'a> Hooking<'a> for Hook<'a> {
     }
 
     fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
-        return format!("{} - {} execute", thing, self.name);
+        return format!("{} - {} execute\n", thing, self.name);
     }
 
     fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
-        return format!("{} - {} post", thing, self.name);
+        return format!("{} - {} post\n", thing, self.name);
     }
 }
 

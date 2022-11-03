@@ -38,7 +38,7 @@ fn main() {
 
     h1.describe();
 
-    let ret = h1.process("Starting: ".to_string());
+    let ret = h1.process("Starting:\n".to_string());
     println!("{}", ret);
 }
 
