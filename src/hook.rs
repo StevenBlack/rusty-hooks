@@ -1,5 +1,44 @@
 use std::option::Option;
 
+#[macro_export]
+macro_rules! hook {
+    () => {
+        Hook {
+        ..Default::default()
+        }
+    };
+    ($name:expr) => {
+        Hook {
+            name: $name.to_string(),
+            ..Default::default()
+        }
+    };
+    ($name:expr, $description:expr) => {
+        Hook {
+            name: $name.to_string(),
+            description: $description.to_string(),
+            ..Default::default()
+        }
+    };
+    ($name:expr, $description:expr, $hook:expr) => {
+        Hook {
+            name: $name.to_string(),
+            description: $description.to_string(),
+            hook: $hook,
+            ..Default::default()
+        }
+    };
+    ($name:expr, $description:expr, $hook:expr, $zethook:expr) => {
+        Hook {
+            name: $name.to_string(),
+            description: $description.to_string(),
+            hook: $hook,
+            zethook: $zethook,
+            ..Default::default()
+        }
+    };
+}
+
 #[derive(Debug)]
 pub struct Hook<'a> {
     pub name: String,
