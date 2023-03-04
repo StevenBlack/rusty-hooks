@@ -189,7 +189,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
 mod tests {
     use super::*;
     #[test]
-    fn hook_default_tests() {
+    fn hook_default_test() {
         // assert_eq!(2 + 2, 4);
         let h = Hook {
             ..Default::default()
@@ -197,4 +197,18 @@ mod tests {
         assert_eq!(h.name, "No-name hook");
         assert_eq!(h.description, "No-description");
     }
+
+    #[test]
+    fn hook_one_parameter_test() {
+        let tst = hook!("some name");
+        assert_eq!(tst.name, "some name");
+    }
+
+    #[test]
+    fn hook_two_parameter_test() {
+        let tst = hook!("some name", "some description");
+        assert_eq!(tst.name, "some name");
+        assert_eq!(tst.description, "some description");
+    }
+
 }
