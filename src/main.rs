@@ -1,7 +1,8 @@
 // Experimenting with hooks in Rust
 mod hook;
+mod traits;
 use crate::hook::*;
-use crate::Hook;
+use crate::traits::*;
 
 fn main() {
     let mut h1 = hook!("hook 1", "The first hook.");

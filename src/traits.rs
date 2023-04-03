@@ -1,3 +1,5 @@
+use crate::hook::Hooking;
+
 pub trait Describing<'a> {
     type Thing;
     fn describe(&mut self) {}
