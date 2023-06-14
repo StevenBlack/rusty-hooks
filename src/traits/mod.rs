@@ -20,12 +20,12 @@ pub trait Hooking<'a> {
     }
 }
 
-pub trait Describing<'a> {
+pub trait Describing<'a> : Hooking<'a> {
     type Thing;
     fn describe(&mut self) {}
 }
 
-pub trait Executing<'a>: Hooking<'a> {
+pub trait Executing<'a> : Hooking<'a> {
     type Thing;
     fn execute(&mut self, thing: <Self as Executing<'a>>::Thing) -> <Self as Executing<'a>>::Thing {
         thing
