@@ -1,4 +1,4 @@
-# rusty-hooks
+# 🔗 rusty-hooks
 
 Experimenting with hooks in Rust while stuck at home.
 
