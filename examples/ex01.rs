@@ -2,6 +2,7 @@
 
 use hox::*;
 use hox::hook::*;
+use hox::traits::*;
 
 fn main() {
     let mut h1 = hook!("hook 1", "The first hook.");

@@ -2,7 +2,7 @@
 
 mod hook;
 mod traits;
-use crate::hook::*;
+use crate::{hook::*, traits::*};
 
 fn main() {
     let mut h1 = hook!("hook 1", "The first hook.");

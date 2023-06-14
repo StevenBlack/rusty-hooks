@@ -1,4 +1,5 @@
 use std::option::Option;
+use crate::traits::*;
 
 #[macro_export]
 macro_rules! hook {
@@ -62,11 +63,6 @@ impl<'a> Default for Hook<'a> {
     }
 }
 
-pub trait Describing<'a> {
-    type Thing;
-    fn describe(&mut self) {}
-}
-
 impl<'a> Describing<'a> for Hook<'a> {
     type Thing = String;
     fn describe(&mut self) {
@@ -94,42 +90,6 @@ impl<'a> Describing<'a> for Hook<'a> {
             h.describe();
         }
 
-    }
-}
-
-pub trait Processing<'a> {
-    type Thing;
-    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
-        thing
-    }
-}
-
-pub trait Hooking<'a> {
-    type Thing;
-    fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
-        self
-    }
-
-    fn zethook(&mut self, _t: &'a mut Self) -> () {}
-
-    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
-        (true, thing)
-    }
-    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
-        thing
-    }
-    fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
-        thing
-    }
-    fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
-        thing
-    }
-}
-
-pub trait Executing<'a>: Hooking<'a> {
-    type Thing;
-    fn execute(&mut self, thing: <Self as Executing<'a>>::Thing) -> <Self as Executing<'a>>::Thing {
-        thing
     }
 }
 

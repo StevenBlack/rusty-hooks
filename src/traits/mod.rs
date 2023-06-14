@@ -1,4 +1,24 @@
-use crate::hook::Hooking;
+pub trait Hooking<'a> {
+    type Thing;
+    fn sethook(&mut self, _t: &'a mut Self) -> &mut Self {
+        self
+    }
+
+    fn zethook(&mut self, _t: &'a mut Self) -> () {}
+
+    fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
+        (true, thing)
+    }
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+    fn execute(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+    fn postprocess(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
+}
 
 pub trait Describing<'a> {
     type Thing;
@@ -12,8 +32,11 @@ pub trait Executing<'a>: Hooking<'a> {
     }
 }
 
-pub trait Process<Executing> {
-    fn process(&self);
+pub trait Processing<'a> {
+    type Thing;
+    fn process(&mut self, thing: Self::Thing) -> Self::Thing {
+        thing
+    }
 }
 
 pub trait Preprocess<Process> {
