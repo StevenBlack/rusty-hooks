@@ -1,4 +1,4 @@
-// Experimenting with hooks in Rust
+// run wirh: cargo run --example ex01
 
 use hox::*;
 use hox::hook::*;
