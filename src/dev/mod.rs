@@ -15,15 +15,17 @@ pub fn normalizetags(s: String) -> String {
 
 // Initial naïve implementation
 pub fn closetags(s: String) -> String {
-    let mut ret = s.to_owned();
-    let mut lines: Vec<String> = ret.split('\n').filter(|&s| !s.is_empty()).map(|x| x.to_owned()).collect();
+    let ret = s.to_owned();
 
+    // Should this be a Lines iterator?
+    // let mut lines: Lines = ret.lines();
+    let lines: Vec<String> = ret.split('\n').filter(|&s| !s.is_empty()).map(|x| x.to_owned()).collect();
     let mut newlines: Vec<String> = Vec::new();
 
     let tags = vec!["p", "b", "i", "strong", "em", "h1", "h2", "h3", "h4", "h5", "h6"];
 
     for refline in &lines {
-        let mut line = refline.to_owned();
+        let mut line: String = refline.to_owned();
         for tag in &tags {
             // bail out if tag is not present globally
             if !s.contains(&format!("<{}>",  tag )) {
