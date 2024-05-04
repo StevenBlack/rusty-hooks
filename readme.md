@@ -7,4 +7,4 @@ Experimenting with hook chains in Rust.
 
 This is still early stages.  Not much to say at this juncture.  
 
-The goal of this repo is to create a framework for sequenced tasking of parsers.
+The goal of this repo is to create a framework for multiple sequenced parser tasking.
