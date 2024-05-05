@@ -5,6 +5,7 @@ mod traits;
 use crate::{hook::*, traits::*};
 
 fn main() {
+    // for now we are just messing with hooks
     let mut h1 = hook!("hook 1", "The first hook.");
     let mut h2 = hook!("hook 2", "The second hook.");
     let mut h3 = hook!("hook 3", "The third hook.");
