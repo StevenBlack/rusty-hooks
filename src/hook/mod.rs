@@ -106,7 +106,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
     }
 
-    fn zethook(&mut self, hook_passed: &'a mut Self) -> () {
+    fn sethooks(&mut self, hook_passed: &'a mut Self) -> () {
         self.hooks.push(hook_passed);
     }
 

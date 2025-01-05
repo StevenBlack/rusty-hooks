@@ -4,7 +4,7 @@ pub trait Hooking<'a> {
         self
     }
 
-    fn zethook(&mut self, _t: &'a mut Self) -> () {}
+    fn sethooks(&mut self, _t: &'a mut Self) -> () {}
 
     fn preprocess(&mut self, thing: Self::Thing) -> (bool, Self::Thing) {
         (true, thing)
