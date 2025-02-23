@@ -2,12 +2,23 @@
 
 pub fn normalizetags(s: String) -> String {
     let mut ret = s.to_owned();
-    let tags = vec!["p", "b", "i", "strong", "em", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "pre", "code", "head", "body", "script", "style"];
+    let tags = vec![
+        "p", "b", "i", "strong", "em",
+        "h1", "h2", "h3", "h4", "h5", "h6",
+        "ul", "ol", "li", "pre", "code",
+        "head", "body", "script", "style"
+    ];
 
     for tag in tags {
         // works only for naked tags
-        ret = ret.replace(&format!("<{}>",  tag ).to_ascii_uppercase(), &format!("<{}>",  tag ));
-        ret = ret.replace(&format!("</{}>",  tag ).to_ascii_uppercase(), &format!("</{}>",  tag ));
+        ret = ret.replace(
+            &format!("<{}>",  tag ).to_ascii_uppercase(),
+            &format!("<{}>",  tag )
+        );
+        ret = ret.replace(
+            &format!("</{}>",
+            tag ).to_ascii_uppercase(), &format!("</{}>",  tag )
+        );
     }
     println!("{}", ret);
     ret
@@ -19,10 +30,18 @@ pub fn closetags(s: String) -> String {
 
     // Should this be a Lines iterator?
     // let mut lines: Lines = ret.lines();
-    let lines: Vec<String> = ret.split('\n').filter(|&s| !s.is_empty()).map(|x| x.to_owned()).collect();
+    let lines: Vec<String> = ret.split('\n')
+    .filter(|&s| !s.is_empty())
+    .map(
+        |x| x.to_owned()
+    )
+    .collect();
     let mut newlines: Vec<String> = Vec::new();
 
-    let tags = vec!["p", "b", "i", "strong", "em", "h1", "h2", "h3", "h4", "h5", "h6"];
+    let tags = vec![
+        "p", "b", "i", "strong", "em",
+        "h1", "h2", "h3", "h4", "h5", "h6"
+    ];
 
     for refline in &lines {
         let mut line: String = refline.to_owned();
@@ -57,8 +76,13 @@ pub fn converttags(s: String) -> String {
     let tags = vec![("b", "strong"), ("i", "em")];
 
     for tag in tags {
-        ret = ret.replace(&format!("<{}>",  tag.0 ), &format!("<{}>",  tag.1 ));
-        ret = ret.replace(&format!("</{}>",  tag.0 ), &format!("</{}>",  tag.1 ));
+        ret = ret.replace(
+            &format!("<{}>",  tag.0 ),
+            &format!("<{}>",  tag.1 ));
+        ret = ret.replace(
+            &format!("</{}>",  tag.0 ),
+            &format!("</{}>",  tag.1 )
+        );
     }
     ret
 }
@@ -66,7 +90,6 @@ pub fn converttags(s: String) -> String {
 #[cfg(test)]
 mod tests {
     use crate::dev::{closetags, normalizetags, converttags};
-
 
     #[test]
     fn normalize_test_1 () {
@@ -95,7 +118,10 @@ mod tests {
     #[test]
     fn closetags_test_3 () {
         let ts = "<p>this is a test\n<p>this is a test".to_string();
-        assert_eq!("<p>this is a test</p>\n<p>this is a test</p>", closetags(ts));
+        assert_eq!(
+            "<p>this is a test</p>\n<p>this is a test</p>",
+            closetags(ts)
+        );
     }
 
     #[test]
@@ -113,7 +139,10 @@ mod tests {
     #[test]
     fn normalizetags_closetags_converttags_test_1 () {
         let ts = "<B>this is a test".to_string();
-        assert_eq!("<strong>this is a test</strong>", closetags(converttags(normalizetags(ts))));
+        assert_eq!(
+            "<strong>this is a test</strong>",
+            closetags(converttags(normalizetags(ts)))
+        );
     }
 
 }
