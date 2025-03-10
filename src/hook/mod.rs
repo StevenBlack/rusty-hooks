@@ -40,6 +40,7 @@ macro_rules! hook {
     };
 }
 
+/// Hooks are things that can be chained together.
 #[derive(Debug)]
 pub struct Hook<'a> {
     pub name: String,
@@ -48,6 +49,7 @@ pub struct Hook<'a> {
     pub hooks: Vec<&'a mut Hook<'a>>,
 }
 
+/// Default implementation for a hook.
 impl<'a> Default for Hook<'a> {
     fn default() -> Hook<'a> {
         Hook {
@@ -93,9 +95,11 @@ impl<'a> Describing<'a> for Hook<'a> {
     }
 }
 
+/// Defining how hooks are linked together.
 impl<'a> Hooking<'a> for Hook<'a> {
     type Thing = String;
 
+    /// Add a hook to this hook's hook chain,
     fn sethook(&mut self, hook_passed: &'a mut Self) -> &mut Self {
         match self.hook {
             Some(ref mut h) => h.sethook(hook_passed),
@@ -106,6 +110,7 @@ impl<'a> Hooking<'a> for Hook<'a> {
         }
     }
 
+    /// Add a hook to this hook's vec of hooks.
     fn sethooks(&mut self, hook_passed: &'a mut Self) -> () {
         self.hooks.push(hook_passed);
     }

@@ -1,4 +1,4 @@
-// Experimenting with hooks in Rust
+//! Experimenting with hooks in Rust
 
 mod hook;
 mod traits;
