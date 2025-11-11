@@ -1,6 +1,21 @@
+use std::collections::HashSet;
+
 /// Utility functions for rusty-hooks.
 pub fn close_tags(s: String) -> String {
     use regex::Regex;
+    let allowed_tags: HashSet<&str> = [
+        "p",
+        "blockquote",
+        "li",
+        "ul",
+        "ol",
+        "strong",
+        "em",
+        "b",
+        "i",
+        // add more tags as needed
+    ].iter().cloned().collect();
+
     let tag_re = Regex::new(r"(?i)<(/?)([a-zA-Z0-9]+)[^>]*>").unwrap();
     let mut open_tags = Vec::new();
 
@@ -8,11 +23,13 @@ pub fn close_tags(s: String) -> String {
         let is_closing = &cap[1] == "/";
         let tag_name = cap[2].to_lowercase();
 
-        if !is_closing {
-            open_tags.push(tag_name.clone());
-        } else {
-            if let Some(pos) = open_tags.iter().rposition(|t| t == &tag_name) {
-                open_tags.remove(pos);
+        if allowed_tags.contains(tag_name.as_str()) {
+            if !is_closing {
+                open_tags.push(tag_name.clone());
+            } else {
+                if let Some(pos) = open_tags.iter().rposition(|t| t == &tag_name) {
+                    open_tags.remove(pos);
+                }
             }
         }
     }
@@ -55,32 +72,32 @@ mod tests {
     #[test]
     fn test_multiple_open_tags() {
         assert_eq!(
-            close_tags("<div><span>Test".to_string()),
-            "<div><span>Test</span></div>"
+            close_tags("<ul><li>Test".to_string()),
+            "<ul><li>Test</li></ul>"
         );
     }
 
     #[test]
     fn test_self_closing_tags() {
         assert_eq!(
-            close_tags("<div><br/>Hello".to_string()),
-            "<div><br/>Hello</div>"
+            close_tags("<ul><br/>Hello".to_string()),
+            "<ul><br/>Hello</ul>"
         );
     }
 
     #[test]
     fn test_attributes() {
         assert_eq!(
-            close_tags("<a href='#'>Link".to_string()),
-            "<a href='#'>Link</a>"
+            close_tags("<blockquote cite='foo'>Quote".to_string()),
+            "<blockquote cite='foo'>Quote</blockquote>"
         );
     }
 
     #[test]
     fn test_mixed_case_tags() {
         assert_eq!(
-            close_tags("<DIV><Span>Text".to_string()),
-            "<DIV><Span>Text</Span></DIV>"
+            close_tags("<UL><LI>Text".to_string()),
+            "<UL><LI>Text</LI></UL>"
         );
     }
 
@@ -93,10 +110,11 @@ mod tests {
     }
 
     #[test]
-    fn test_complex() {
+    fn test_ignored_tags() {
+        // <div> is not in the allowed list, so it won't be closed
         assert_eq!(
-            close_tags("<ul><li>Item 1<li>Item 2".to_string()),
-            "<ul><li>Item 1<li>Item 2</li></li></ul>"
+            close_tags("<div><strong>Test".to_string()),
+            "<div><strong>Test</strong>"
         );
     }
 }

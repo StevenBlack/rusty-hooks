@@ -1,8 +1,8 @@
 // run wirh: cargo run --example ex01
 
-use hox::*;
-use hox::hook::*;
-use hox::traits::*;
+use hooks::*;
+use hooks::hook::*;
+use hooks::traits::*;
 
 fn main() {
     let mut h1 = hook!("hook 1", "The first hook.");
